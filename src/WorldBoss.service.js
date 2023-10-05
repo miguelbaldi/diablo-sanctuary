@@ -1,9 +1,11 @@
 import CircularStack from "circular-stack";
-import { DateTime, Interval } from "luxon";
+import { DateTime, Interval, Duration } from "luxon";
 
 class WorldBossService {
   constructor() {
-    this.zero = DateTime.fromFormat("13/06/2023 19:04:25", "dd/MM/yyyy HH:mm:ss", { locale: "pt_BR" });
+    //this.zero = DateTime.fromFormat("13/06/2023 19:02:00", "dd/MM/yyyy HH:mm:ss", { zone: "UTC-4" });
+    // this.zero = DateTime.local(2023, 6, 13, 19, 2, 0, 0, { zone: 'UTC-4' });
+    this.zero = DateTime.local(2023, 10, 5, 13, 55, 43, 0, { zone: 'UTC-4' });
     this.WD = "Wandering Death";
     this.AV = "Avarice";
     this.AS = "Ashava";
@@ -15,28 +17,45 @@ class WorldBossService {
 
 
   isNotAllowedTimeInterval(dt) {
-    var time = DateTime.now().set({ hour: dt.hour, minute: dt.minute });
-    var first = Interval.after({ hour: 1, minute: 30 }, { hour: 2, minute: 1 });
-    var second = Interval.after({ hour: 7, minute: 30 }, { hour: 2, minute: 1 });
-    var third = Interval.after({ hour: 13, minute: 30 }, { hour: 2, minute: 1 });
-    var fourth = Interval.after({ hour: 19, minute: 30 }, { hour: 2, minute: 1 });
-    if (first.contains(time)
-      || second.contains(time)
-      || third.contains(time)
-      || fourth.contains(time)) {
+    var time = DateTime.local({ zone: 'UTC-4' }).set({ hour: dt.hour, minute: dt.minute, second: 0, millisecond: 0 });
+    var firstStart = DateTime.local({ zone: 'UTC-4' }).set({ hour: 0, minute: 30, second: 0, millisecond: 0 });
+    var firstEnd = DateTime.local({ zone: 'UTC-4' }).set({ hour: 2, minute: 30, second: 0, millisecond: 0 });
+    var secondStart = DateTime.local({ zone: 'UTC-4' }).set({ hour: 6, minute: 30, second: 0, millisecond: 0 });
+    var secondEnd = DateTime.local({ zone: 'UTC-4' }).set({ hour: 8, minute: 30, second: 0, millisecond: 0 });
+    var thirdStart = DateTime.local({ zone: 'UTC-4' }).set({ hour: 12, minute: 30, second: 0, millisecond: 0 });
+    var thirdEnd = DateTime.local({ zone: 'UTC-4' }).set({ hour: 14, minute: 30, second: 0, millisecond: 0 });
+    var fourthStart = DateTime.local({ zone: 'UTC-4' }).set({ hour: 18, minute: 30, second: 0, millisecond: 0 });
+    var fourthEnd = DateTime.local({ zone: 'UTC-4' }).set({ hour: 20, minute: 30, second: 0, millisecond: 0 });
+    if (this.checkTimeInterval(time, firstStart, firstEnd)      || 
+      this.checkTimeInterval(time, secondStart, secondEnd)
+      || this.checkTimeInterval(time, thirdStart, thirdEnd)
+      || this.checkTimeInterval(time, fourthStart, fourthEnd)) {
+      console.log("Hours: " + dt.toISO() + " time: " + time.toISO());
       return false;
     } else {
+      console.log("Add 2 hours: " + dt.toISO() + " time: " + time.toISO());
       return true;
+    }
+  }
+
+
+  checkTimeInterval(time, start, end) {
+    if (start <= time && end >= time) {
+      return true;
+    } else {
+      return false;
     }
   }
 
   calculateSingle(baseDT) {
     var currentBoss = this.bosses.pop();
-    var currentDT = baseDT.plus({ minute: currentBoss.offset });
+    var currentDT = baseDT.plus(currentBoss.offset);
+    var extra = false;
     if (this.isNotAllowedTimeInterval(currentDT)) {
-      currentDT = currentDT.plus({ hour: 2 });
+      currentDT = currentDT.plus({ minute: 120 });
+      extra = true;
     }
-    var occurrence = { order: currentBoss.order, boss: currentBoss.boss, datetime: currentDT }
+    var occurrence = { order: currentBoss.order, extraTime: extra, boss: currentBoss.boss, datetime: currentDT }
     this.refillBossStack();
     return occurrence;
   }
@@ -46,11 +65,11 @@ class WorldBossService {
     this.pastOccurences = new CircularStack(parameters.pastEventsSize + 1);
     this.futureOccurences = new CircularStack((parameters.days * 4) + 4);
     this.refillBossStack();
-    var now = DateTime.now();
-    var finalDT = DateTime.now().plus({ day: parameters.days });
+    var now = DateTime.local({ zone: 'UTC-4' });
+    var finalDT = DateTime.local({ zone: 'UTC-4' }).plus({ day: parameters.days });
+    console.log("Starting calculation from " + this.zero.toISO() + ", to " + finalDT.toISO());
     var occurrence = this.calculateSingle(this.zero);
     this.pastOccurences.push(occurrence);
-    console.log("Starting calculation from " + this.zero.toISO() + ", to " + finalDT.toISO(), occurrence);
     var currentDT = occurrence.datetime;
     while (occurrence.datetime <= finalDT) {
       occurrence = this.calculateSingle(currentDT);
@@ -60,7 +79,7 @@ class WorldBossService {
       } else {
         this.futureOccurences.push(occurrence);
       }
-      console.log("Occurrence: date=" + occurrence.datetime.toISO() + ", boss=" + occurrence.boss + ", order=" + occurrence.order);
+      //console.log("Occurrence: date=" + occurrence.datetime.toISO() + ", boss=" + occurrence.boss + ", order=" + occurrence.order);
     }
 
     while (this.futureOccurences.size > 0) {
@@ -75,6 +94,16 @@ class WorldBossService {
 
 
   refillBossStack() {
+    if (this.bosses.size === 0) {
+      this.bosses.push({ order: 4, offset: Duration.fromISO('PT5H53M30S'), boss: this.AS });
+      this.bosses.push({ order: 3, offset: Duration.fromISO('PT5H53M29S'), boss: this.AS });
+      this.bosses.push({ order: 2, offset: Duration.fromISO('PT5H25M13S'), boss: this.AS });
+      this.bosses.push({ order: 1, offset: Duration.fromISO('PT5H53M30S'), boss: this.AS });
+      this.bosses.push({ order: 5, offset: Duration.fromISO('PT5H25M13S'), boss: this.AS });
+    }
+  }
+
+  refillBossStackOld() {
     if (this.bosses.size === 0) {
       this.bosses.push({ order: 37, offset: 353.00, boss: this.AV });
       this.bosses.push({ order: 36, offset: 325.22, boss: this.AV });
