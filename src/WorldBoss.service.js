@@ -8,7 +8,9 @@ class WorldBossService {
     this.AV = "Avarice";
     this.AS = "Ashava";
     this.bosses = new CircularStack(38);
-    this.occurrences = new CircularStack(500);
+    this.pastOccurences = new CircularStack(1);
+    this.futureOccurences = new CircularStack(1);
+    this.occurrences = [];
   }
 
 
@@ -34,25 +36,41 @@ class WorldBossService {
     if (this.isNotAllowedTimeInterval(currentDT)) {
       currentDT = currentDT.plus({ hour: 2 });
     }
-    var occurrence = {order: currentBoss.order, boss: currentBoss.boss, datetime: currentDT }
-    this.occurrences.push(occurrence);
+    var occurrence = { order: currentBoss.order, boss: currentBoss.boss, datetime: currentDT }
     this.refillBossStack();
     return occurrence;
   }
 
-  calculate() {
+  calculate(parameters) {
+    this.occurrences = [];
+    this.pastOccurences = new CircularStack(parameters.pastEventsSize + 1);
+    this.futureOccurences = new CircularStack((parameters.days * 4) + 4);
     this.refillBossStack();
-    //this.bosses.pop();
-    var finalDT = DateTime.now().plus({ day: 4 });
+    var now = DateTime.now();
+    var finalDT = DateTime.now().plus({ day: parameters.days });
     var occurrence = this.calculateSingle(this.zero);
+    this.pastOccurences.push(occurrence);
     console.log("Starting calculation from " + this.zero.toISO() + ", to " + finalDT.toISO(), occurrence);
     var currentDT = occurrence.datetime;
     while (occurrence.datetime <= finalDT) {
       occurrence = this.calculateSingle(currentDT);
       currentDT = occurrence.datetime;
+      if (occurrence.datetime < now) {
+        this.pastOccurences.push(occurrence);
+      } else {
+        this.futureOccurences.push(occurrence);
+      }
       console.log("Occurrence: date=" + occurrence.datetime.toISO() + ", boss=" + occurrence.boss + ", order=" + occurrence.order);
     }
-    return this.occurrences;
+
+    while (this.futureOccurences.size > 0) {
+      this.occurrences.push(this.futureOccurences.pop());
+    }
+    while (this.pastOccurences.size > 0) {
+      this.occurrences.push(this.pastOccurences.pop());
+    }
+
+    return this.occurrences.reverse();
   }
 
 
