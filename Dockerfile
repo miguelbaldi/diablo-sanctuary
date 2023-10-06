@@ -9,4 +9,6 @@ COPY package.json /diablo-sanctuary/
 
 RUN npm install
 
+EXPOSE 3000
+
 CMD ["npm", "start"]
