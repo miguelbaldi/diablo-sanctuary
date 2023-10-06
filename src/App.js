@@ -10,7 +10,7 @@ function WorldBossSpawnTimerComponent() {
   function updateTimers() {
     var timers = document.querySelectorAll(".js-saola-timer");
     timers.forEach(timer => {
-      var now = DateTime.local({zone: 'UTC-4'});
+      var now = DateTime.local({ zone: 'UTC-4' });
       var occurrenceDT = DateTime.fromMillis(parseInt(timer.dataset.date));
       var i = Math.floor((occurrenceDT - now) / 1000);
       if (i >= 0) {
@@ -166,39 +166,41 @@ function WorldBossSpawnTimerComponent() {
                   if (event.target.value) {
                     setParameters({ pastEventsSize: parseInt(event.target.value), days: parameters.days });
                   }
-                }} id="inlineFormInputGroupUsername2" placeholder={"Default to " + parameters.pastEventsSize +" past events"} />
+                }} id="inlineFormInputGroupUsername2" placeholder={"Default to " + parameters.pastEventsSize + " past events"} />
               </div>
               <button type="button" onClick={() => doIt()} className="btn btn-primary mb-2">Reload</button>
             </form>
           </div>
           <div className="row flex-nowrap">
             <div className="col">
-              <table className="table table-sm">
-                <thead>
-                  <tr>
-                    <th scope="col" width="5%">#</th>
-                    <th scope="col" width="5%">Extra</th>
-                    <th scope="col" width="25%">Timer</th>
-                    <th scope="col" width="40%">Boss Time</th>
-                    <th scope="col" width="20%">Boss</th>
-                  </tr>
-                </thead>
-                <tbody className="overflow-auto">
-                  {occurrences.map(occurrence => (
-                    <tr key={occurrence.datetime.toMillis()} className={colorByBoss(occurrence)}>
-                      <td className="center">{occurrence.order}</td>
-                      <td className="center">{occurrence.extraTime+""}</td>
-                      <td className="center">
-                        <b className="a-bold">
-                          <div className="js-saola-timer" data-date={occurrence.datetime.toMillis()}></div>
-                        </b>
-                      </td>
-                      <td className="center">{occurrence.datetime.setZone('America/Sao_Paulo').setLocale('pt-BR').toLocaleString(DateTime.DATETIME_SHORT)}</td>
-                      <td className="center">{occurrence.boss}</td>
+              <div className="table-responsive">
+                <table className="table table-sm">
+                  <thead>
+                    <tr>
+                      <th scope="col" width="5%">#</th>
+                      <th scope="col" width="5%">Extra</th>
+                      <th scope="col" width="25%">Timer</th>
+                      <th scope="col" width="40%">Boss Time</th>
+                      <th scope="col" width="20%">Boss</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="overflow-auto">
+                    {occurrences.map(occurrence => (
+                      <tr key={occurrence.datetime.toMillis()} className={colorByBoss(occurrence)}>
+                        <td className="center">{occurrence.order}</td>
+                        <td className="center">{occurrence.extraTime + ""}</td>
+                        <td className="center">
+                          <b className="a-bold">
+                            <div className="js-saola-timer" data-date={occurrence.datetime.toMillis()}></div>
+                          </b>
+                        </td>
+                        <td className="center">{occurrence.datetime.setZone('America/Sao_Paulo').setLocale('pt-BR').toLocaleString(DateTime.DATETIME_SHORT)}</td>
+                        <td className="center">{occurrence.boss}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
