@@ -178,17 +178,15 @@ function WorldBossSpawnTimerComponent() {
                   <thead>
                     <tr>
                       <th scope="col" width="5%">#</th>
-                      <th scope="col" width="5%">Extra</th>
-                      <th scope="col" width="25%">Timer</th>
-                      <th scope="col" width="40%">Boss Time</th>
-                      <th scope="col" width="20%">Boss</th>
+                      <th scope="col" width="35%">Timer</th>
+                      <th scope="col" width="35%">Boss Time</th>
+                      <th scope="col" width="25%">Boss</th>
                     </tr>
                   </thead>
                   <tbody className="overflow-auto">
                     {occurrences.map(occurrence => (
                       <tr key={occurrence.datetime.toMillis()} className={colorByBoss(occurrence)}>
-                        <td className="center">{occurrence.order}</td>
-                        <td className="center">{occurrence.extraTime + ""}</td>
+                        <td className={occurrence.extraTime ? "center fw-bold":"center"}>{occurrence.order}</td>
                         <td className="center">
                           <b className="a-bold">
                             <div className="js-saola-timer" data-date={occurrence.datetime.toMillis()}></div>

@@ -1,11 +1,12 @@
 import CircularStack from "circular-stack";
-import { DateTime, Interval, Duration } from "luxon";
+import { DateTime, Duration } from "luxon";
 
 class WorldBossService {
   constructor() {
     //this.zero = DateTime.fromFormat("13/06/2023 19:02:00", "dd/MM/yyyy HH:mm:ss", { zone: "UTC-4" });
     // this.zero = DateTime.local(2023, 6, 13, 19, 2, 0, 0, { zone: 'UTC-4' });
-    this.zero = DateTime.local(2023, 10, 5, 13, 55, 43, 0, { zone: 'UTC-4' });
+    // this.zero = DateTime.local(2023, 10, 5, 13, 55, 43, 0, { zone: 'UTC-4' });
+    this.zero = DateTime.local(2023, 10, 5, 19, 20, 56, 0, { zone: 'UTC-4' });
     this.WD = "Wandering Death";
     this.AV = "Avarice";
     this.AS = "Ashava";
@@ -61,7 +62,7 @@ class WorldBossService {
   }
 
   calculate(parameters) {
-    this.occurrences = [];
+    let result = [];
     this.pastOccurences = new CircularStack(parameters.pastEventsSize + 1);
     this.futureOccurences = new CircularStack((parameters.days * 4) + 4);
     this.refillBossStack();
@@ -83,23 +84,44 @@ class WorldBossService {
     }
 
     while (this.futureOccurences.size > 0) {
-      this.occurrences.push(this.futureOccurences.pop());
+      result.push(this.futureOccurences.pop());
     }
     while (this.pastOccurences.size > 0) {
-      this.occurrences.push(this.pastOccurences.pop());
+      result.push(this.pastOccurences.pop());
     }
 
-    return this.occurrences.reverse();
+    return result.reverse();
   }
 
 
+  refillBossStackNoBoss() {
+    if (this.bosses.size === 0) {
+      this.bosses.push({ order: 4, offset: Duration.fromISO('PT5H53M30S'), boss: undefined });
+      this.bosses.push({ order: 3, offset: Duration.fromISO('PT5H53M29S'), boss: undefined });
+      this.bosses.push({ order: 2, offset: Duration.fromISO('PT5H25M13S'), boss: undefined });
+      this.bosses.push({ order: 1, offset: Duration.fromISO('PT5H53M30S'), boss: undefined });
+      this.bosses.push({ order: 5, offset: Duration.fromISO('PT5H25M13S'), boss: undefined });
+    }
+  }
   refillBossStack() {
     if (this.bosses.size === 0) {
+      this.bosses.push({ order: 5, offset: Duration.fromISO('PT5H25M13S'), boss: this.AS });
       this.bosses.push({ order: 4, offset: Duration.fromISO('PT5H53M30S'), boss: this.AS });
       this.bosses.push({ order: 3, offset: Duration.fromISO('PT5H53M29S'), boss: this.AS });
+      this.bosses.push({ order: 2, offset: Duration.fromISO('PT5H25M13S'), boss: this.AV });
+      this.bosses.push({ order: 1, offset: Duration.fromISO('PT5H53M30S'), boss: this.AV });
+
+      this.bosses.push({ order: 5, offset: Duration.fromISO('PT5H25M13S'), boss: this.WD });
+      this.bosses.push({ order: 4, offset: Duration.fromISO('PT5H53M30S'), boss: this.WD });
+      this.bosses.push({ order: 3, offset: Duration.fromISO('PT5H53M29S'), boss: this.WD });
       this.bosses.push({ order: 2, offset: Duration.fromISO('PT5H25M13S'), boss: this.AS });
       this.bosses.push({ order: 1, offset: Duration.fromISO('PT5H53M30S'), boss: this.AS });
-      this.bosses.push({ order: 5, offset: Duration.fromISO('PT5H25M13S'), boss: this.AS });
+
+      this.bosses.push({ order: 5, offset: Duration.fromISO('PT5H25M13S'), boss: this.AV });
+      this.bosses.push({ order: 4, offset: Duration.fromISO('PT5H53M30S'), boss: this.AV });
+      this.bosses.push({ order: 3, offset: Duration.fromISO('PT5H53M29S'), boss: this.AV });
+      this.bosses.push({ order: 2, offset: Duration.fromISO('PT5H25M13S'), boss: this.WD });
+      this.bosses.push({ order: 1, offset: Duration.fromISO('PT5H53M30S'), boss: this.WD });
     }
   }
 

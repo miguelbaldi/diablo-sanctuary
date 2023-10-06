@@ -1,6 +1,8 @@
 Boss prediction note's
 ======================
 
+**Weekly Reset for World Bosses is on Thursday every week. Players can receive one Grand Cache every week from each of the three World Bosses.**
+
 Boss spawn pattern
 ------------------
 
@@ -47,16 +49,20 @@ The tried and true time pattern is the following:
 
 - (3) 05/10/2023, 09:02 Ashava
 - (4) 05/10/2023, 14:55 Ashava
-- (5) 05/10/2023, 20:20 Ashava
+- (5) 05/10/2023, 20:20 Ashava (our starting point)
 - (1) 06/10/2023, 02:14 WD
 - (2) 06/10/2023, 07:39 WD
 - (3) 06/10/2023, 13:33 Avarice
+- (4) 06/10/2023, 21:26 Avarice
+- (5) 07/10/2023, 02:51 Avarice
+- (1) 07/10/2023, 08:45 Ashava?
+- (2) 07/10/2023, 14:10 Ashava?
 
 Pseudo-code trying to reverse engineer the patterns, both time and boss names:
 
 ```javascript
 // Start date/time used for prediction calculation:
-this.zero = DateTime.local(2023, 10, 5, 13, 55, 43, 0, { zone: 'UTC-4' }); // 05/10/2023, 14:55 Ashava
+this.zero = DateTime.local(2023, 10, 5, 19, 20, 56, 0, { zone: 'UTC-4' }); // 06/10/2023, 02:14 WD
 ```
 
 ```javascript
