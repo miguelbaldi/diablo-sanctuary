@@ -25,6 +25,11 @@ const Layout = () => {
                   <i className="fs-4 bi-table"></i> <span className="ms-1 d-none d-sm-inline">World Boss Tracker</span>
                 </Link>
               </li>
+              <li>
+                <Link to="/helltide" className="nav-link px-0 align-middle">
+                  <i className="fs-4 bi-table"></i> <span className="ms-1 d-none d-sm-inline">Helltide Tracker</span>
+                </Link>
+              </li>
             </ul>
             <hr />
             <div className="dropdown pb-4">
