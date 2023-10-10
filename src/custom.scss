@@ -1,1 +1,13 @@
 @import "~/node_modules/bootstrap/scss/bootstrap";
+
+.btn.float {
+  z-index: 9999;
+
+  &.right {
+    float: right;
+  }
+
+  &.left {
+    float: left;
+  }
+}

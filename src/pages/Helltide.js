@@ -4,13 +4,14 @@ import HelltideService from "../services/Helltide.service";
 import "../helltide.scss";
 
 function HelltideComponent() {
-  const [dropletsSize, setDropletsSize] = useState(250);
+  const DEFAULT_DROPLETS_SIZE = 250;
+  const [dropletsSize, setDropletsSize] = useState(DEFAULT_DROPLETS_SIZE);
   const [ready, setReady] = useState(false);
   const [droplets, setDroplets] = useState([]);
   // Declare a state variable called "count" and initialize it to 0
   const [occurrences, setOccurrences] = useState({});
 
-  const generateBloodyDropletsFromHell = useCallback( () => {
+  const generateBloodyDropletsFromHell = useCallback(() => {
     var result = [];
     for (let index = 0; index < dropletsSize; index++) {
       const element = {
@@ -24,7 +25,7 @@ function HelltideComponent() {
       result.push(element);
     }
     setDroplets(result);
-  },[dropletsSize, setDroplets]);
+  }, [dropletsSize, setDroplets]);
 
   const updateTimers = useCallback(() => {
     var timers = document.querySelectorAll(".helltide-js-timer");
@@ -48,7 +49,15 @@ function HelltideComponent() {
 
     });
     setTimeout(() => { updateTimers() }, 1000);
-  },[]);
+  }, []);
+
+  const toggleBloodyRain = useCallback(() => {
+    if (dropletsSize > 0) {
+      setDropletsSize(0);
+    } else {
+      setDropletsSize(DEFAULT_DROPLETS_SIZE);
+    }
+  }, [setDropletsSize, dropletsSize]);
 
   function getCardFooterClass(occ) {
     if (occ.active) {
@@ -77,6 +86,9 @@ function HelltideComponent() {
 
   return (
     <>
+      <button type="button" className="btn btn-primary float right" onClick={toggleBloodyRain}>
+        <i className={dropletsSize > 0 ? "bi bi-droplet" : "bi bi-droplet-fill"}></i>
+      </button>
       <div className="rain">
         {droplets.map(droplet => (
           <svg className="rain__drop" preserveAspectRatio="xMinYMin" viewBox="0 0 5 50" style={droplet}>
@@ -94,7 +106,7 @@ function HelltideComponent() {
           <div className="col">
             <div className="card border-danger text-bg-secondary text-center">
               <div className="card-header border-danger">
-              {occurrences.first.active ? "Current" : "Next"}
+                {occurrences.first.active ? "Current" : "Next"}
               </div>
               <div className="card-body border-danger">
                 <h5 className="card-title">{occurrences.first.datetime.setZone('America/Sao_Paulo').setLocale('pt-BR').toLocaleString(DateTime.DATETIME_SHORT)}</h5>
@@ -108,10 +120,10 @@ function HelltideComponent() {
           <div className="col">
             <div className="card border-danger text-bg-dark text-center">
               <div className="card-header border-danger">
-              {occurrences.second.active ? "Current" : "Next"}
+                {occurrences.second.active ? "Current" : "Next"}
               </div>
               <div className="card-body border-danger">
-              <h5 className="card-title">{occurrences.second.datetime.setZone('America/Sao_Paulo').setLocale('pt-BR').toLocaleString(DateTime.DATETIME_SHORT)}</h5>
+                <h5 className="card-title">{occurrences.second.datetime.setZone('America/Sao_Paulo').setLocale('pt-BR').toLocaleString(DateTime.DATETIME_SHORT)}</h5>
                 <p className="card-text">{occurrences.second.active ? "Helltide active." : "Helltide inactive"}</p>
               </div>
               <div className={getCardFooterClass(occurrences.first)}>
