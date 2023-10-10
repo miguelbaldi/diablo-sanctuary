@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Interval, DateTime } from "luxon";
+import { Interval, DateTime, Duration } from "luxon";
 import HelltideService from "../services/Helltide.service";
 import "../helltide.scss";
 
 function HelltideComponent() {
   const [dropletsSize, setDropletsSize] = useState(250);
+  const [ready, setReady] = useState(false);
   const [droplets, setDroplets] = useState([]);
   // Declare a state variable called "count" and initialize it to 0
-  const [occurrences, setOccurrences] = useState([]);
-  const [parameters, setParameters] = useState({ days: 2, pastEventsSize: 3 });
+  const [occurrences, setOccurrences] = useState({});
 
   function generateBloodyDropletsFromHell() {
     var result = [];
@@ -27,27 +27,41 @@ function HelltideComponent() {
   }
 
   function updateTimers() {
-    var timers = document.querySelectorAll(".js-saola-timer");
+    var timers = document.querySelectorAll(".helltide-js-timer");
     timers.forEach(timer => {
       var now = DateTime.local({ zone: 'UTC-4' });
       var occurrenceDT = DateTime.fromMillis(parseInt(timer.dataset.date));
-      var i = Math.floor((occurrenceDT - now) / 1000);
-      if (i >= 0) {
-        var duration = Interval.fromDateTimes(now, occurrenceDT).toDuration().rescale().reconfigure({ locale: 'pt-BR' });
-        if (duration.as('minute') <= 30) {
-          timer.classList.add('text-danger');
-        } else {
-          timer.classList.remove('text-danger');
-        }
-        timer.innerHTML = Interval.fromDateTimes(now, occurrenceDT).toDuration().rescale().reconfigure({ locale: 'pt-BR' }).toFormat("d 'dias,' hh':'mm':'ss");
+      var duration;
+      var durationFormatted;
+      if (occurrenceDT > now) {
+        duration = Interval.fromDateTimes(now, occurrenceDT).toDuration().rescale().reconfigure({ locale: 'pt-BR' });
+      } else {
+        duration = Interval.fromDateTimes(now, occurrenceDT.plus(Duration.fromISO("PT1H"))).toDuration().rescale().reconfigure({ locale: 'pt-BR' });
       }
+      durationFormatted = duration.toFormat("hh':'mm':'ss")
+      if (duration.as('minute') <= 30) {
+        timer.classList.add('text-danger');
+      } else {
+        timer.classList.remove('text-danger');
+      }
+      timer.innerHTML = durationFormatted;
+
     });
     setTimeout(() => { updateTimers() }, 1000);
+  }
+
+  function getCardFooterClass(occ) {
+    if (occ.active) {
+      return "card-footer border-danger text-body-primary";
+    } else {
+      return "card-footer border-danger";
+    }
   }
 
   useEffect(() => {
     generateBloodyDropletsFromHell();
     doIt();
+    setReady(true);
     // Code here will run after *every* render
     const timer = setTimeout(() => {
       updateTimers();
@@ -75,32 +89,38 @@ function HelltideComponent() {
           <h2>Helltide Tracker</h2>
         </div>
       </div>
-      <div className="row flex-nowrap">
-        <div className="col">
-          <div className="table-responsive">
-            <table className="table table-sm">
-              <thead>
-                <tr>
-                  <th scope="col" width="35%">Timer</th>
-                  <th scope="col" width="35%">Helltide Time</th>
-                </tr>
-              </thead>
-              <tbody className="overflow-auto">
-                {occurrences.map(occurrence => (
-                  <tr key={occurrence.toMillis()}>
-                    <td className="center">
-                      <b className="a-bold">
-                        <div className="js-saola-timer" data-date={occurrence.toMillis()}></div>
-                      </b>
-                    </td>
-                    <td className="center">{occurrence.setZone('America/Sao_Paulo').setLocale('pt-BR').toLocaleString(DateTime.DATETIME_SHORT)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      {ready &&
+        <div className="row flex-nowrap">
+          <div className="col">
+            <div className="card border-danger text-bg-secondary text-center">
+              <div className="card-header border-danger">
+              {occurrences.first.active ? "Current" : "Next"}
+              </div>
+              <div className="card-body border-danger">
+                <h5 className="card-title">{occurrences.first.datetime.setZone('America/Sao_Paulo').setLocale('pt-BR').toLocaleString(DateTime.DATETIME_SHORT)}</h5>
+                <p className="card-text">{occurrences.first.active ? "Helltide active." : "Helltide inactive"}</p>
+              </div>
+              <div className={getCardFooterClass(occurrences.first)}>
+                <div className="helltide-js-timer" data-active={occurrences.first.active} data-date={occurrences.first.datetime}></div>
+              </div>
+            </div>
+          </div>
+          <div className="col">
+            <div className="card border-danger text-bg-dark text-center">
+              <div className="card-header border-danger">
+              {occurrences.second.active ? "Current" : "Next"}
+              </div>
+              <div className="card-body border-danger">
+              <h5 className="card-title">{occurrences.second.datetime.setZone('America/Sao_Paulo').setLocale('pt-BR').toLocaleString(DateTime.DATETIME_SHORT)}</h5>
+                <p className="card-text">{occurrences.second.active ? "Helltide active." : "Helltide inactive"}</p>
+              </div>
+              <div className={getCardFooterClass(occurrences.first)}>
+                <div className="helltide-js-timer" data-active={occurrences.second.active} data-date={occurrences.second.datetime}></div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      }
     </>
 
   );
