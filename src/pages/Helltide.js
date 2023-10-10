@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Interval, DateTime, Duration } from "luxon";
 import HelltideService from "../services/Helltide.service";
 import "../helltide.scss";
@@ -10,7 +10,7 @@ function HelltideComponent() {
   // Declare a state variable called "count" and initialize it to 0
   const [occurrences, setOccurrences] = useState({});
 
-  function generateBloodyDropletsFromHell() {
+  const generateBloodyDropletsFromHell = useCallback( () => {
     var result = [];
     for (let index = 0; index < dropletsSize; index++) {
       const element = {
@@ -24,9 +24,9 @@ function HelltideComponent() {
       result.push(element);
     }
     setDroplets(result);
-  }
+  },[dropletsSize, setDroplets]);
 
-  function updateTimers() {
+  const updateTimers = useCallback(() => {
     var timers = document.querySelectorAll(".helltide-js-timer");
     timers.forEach(timer => {
       var now = DateTime.local({ zone: 'UTC-4' });
@@ -48,7 +48,7 @@ function HelltideComponent() {
 
     });
     setTimeout(() => { updateTimers() }, 1000);
-  }
+  },[]);
 
   function getCardFooterClass(occ) {
     if (occ.active) {
@@ -67,7 +67,7 @@ function HelltideComponent() {
       updateTimers();
     }, 1000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [generateBloodyDropletsFromHell, updateTimers]);
 
   function doIt() {
     var resultList = new HelltideService().calculate();
@@ -101,7 +101,7 @@ function HelltideComponent() {
                 <p className="card-text">{occurrences.first.active ? "Helltide active." : "Helltide inactive"}</p>
               </div>
               <div className={getCardFooterClass(occurrences.first)}>
-                <div className="helltide-js-timer" data-active={occurrences.first.active} data-date={occurrences.first.datetime}></div>
+                <div className="helltide-js-timer" data-active={occurrences.first.active} data-date={occurrences.first.datetime}>00:00:00</div>
               </div>
             </div>
           </div>
@@ -115,7 +115,7 @@ function HelltideComponent() {
                 <p className="card-text">{occurrences.second.active ? "Helltide active." : "Helltide inactive"}</p>
               </div>
               <div className={getCardFooterClass(occurrences.first)}>
-                <div className="helltide-js-timer" data-active={occurrences.second.active} data-date={occurrences.second.datetime}></div>
+                <div className="helltide-js-timer" data-active={occurrences.second.active} data-date={occurrences.second.datetime}>00:00:00</div>
               </div>
             </div>
           </div>
