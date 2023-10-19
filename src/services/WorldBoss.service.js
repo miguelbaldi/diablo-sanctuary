@@ -2,16 +2,16 @@ import CircularStack from "circular-stack";
 import { DateTime, Duration } from "luxon";
 
 const WorldBoss = {
-  WD : Symbol("Wandering Death"),
-  AV : Symbol("Avarice"),
-  AS : Symbol("Ashava"),
+  WD: Symbol("Wandering Death"),
+  AV: Symbol("Avarice"),
+  AS: Symbol("Ashava"),
 }
 
 class WorldBossService {
   constructor() {
     this.offset = Duration.fromISO('PT3H30M');
     // this.zero = DateTime.local(2023, 10, 5, 19, 20, 56, 0, { zone: 'UTC-4' });
-    this.zero = DateTime.fromISO('2023-10-19T09:30:00.000-04:00');
+    this.zero = DateTime.fromISO('2023-10-20T03:00:00.000-04:00');
     this.bosses = new CircularStack(38);
     this.pastOccurences = new CircularStack(1);
     this.futureOccurences = new CircularStack(1);
@@ -29,7 +29,7 @@ class WorldBossService {
     var thirdEnd = DateTime.local({ zone: 'UTC-4' }).set({ hour: 14, minute: 30, second: 0, millisecond: 0 });
     var fourthStart = DateTime.local({ zone: 'UTC-4' }).set({ hour: 18, minute: 30, second: 0, millisecond: 0 });
     var fourthEnd = DateTime.local({ zone: 'UTC-4' }).set({ hour: 20, minute: 30, second: 0, millisecond: 0 });
-    if (this.checkTimeInterval(time, firstStart, firstEnd)      || 
+    if (this.checkTimeInterval(time, firstStart, firstEnd) ||
       this.checkTimeInterval(time, secondStart, secondEnd)
       || this.checkTimeInterval(time, thirdStart, thirdEnd)
       || this.checkTimeInterval(time, fourthStart, fourthEnd)) {
@@ -78,12 +78,12 @@ class WorldBossService {
     var now = DateTime.local({ zone: 'UTC-4' });
     var last = now.plus({ day: parameters.days });
     var occurrence = this.calculateSingle(this.zero);
-    if(occurrence.datetime >= now) {
+    if (occurrence.datetime >= now) {
       result.push(occurrence);
     }
-    while(occurrence.datetime <= last) {
+    while (occurrence.datetime <= last) {
       occurrence = this.calculateSingle(occurrence.datetime);
-      if(occurrence.datetime >= now) {
+      if (occurrence.datetime >= now) {
         result.push(occurrence);
       }
     }
@@ -123,23 +123,26 @@ class WorldBossService {
 
   refillBossStack() {
     if (this.bosses.size === 0) {
-      this.bosses.push({ order: 2, offset: this.offset, boss: WorldBoss.WD.description });
-      this.bosses.push({ order: 1, offset: this.offset, boss: WorldBoss.WD.description });
       this.bosses.push({ order: 15, offset: this.offset, boss: WorldBoss.AS.description });
       this.bosses.push({ order: 14, offset: this.offset, boss: WorldBoss.AS.description });
-      this.bosses.push({ order: 13, offset: this.offset, boss: WorldBoss.AV.description });
 
+      this.bosses.push({ order: 13, offset: this.offset, boss: WorldBoss.AV.description });
       this.bosses.push({ order: 12, offset: this.offset, boss: WorldBoss.AV.description });
       this.bosses.push({ order: 11, offset: this.offset, boss: WorldBoss.AV.description });
+
       this.bosses.push({ order: 10, offset: this.offset, boss: WorldBoss.WD.description });
       this.bosses.push({ order: 9, offset: this.offset, boss: WorldBoss.WD.description });
-      this.bosses.push({ order: 8, offset: this.offset, boss: WorldBoss.AS.description });
 
+      this.bosses.push({ order: 8, offset: this.offset, boss: WorldBoss.AS.description });
       this.bosses.push({ order: 7, offset: this.offset, boss: WorldBoss.AS.description });
       this.bosses.push({ order: 6, offset: this.offset, boss: WorldBoss.AS.description });
+
       this.bosses.push({ order: 5, offset: this.offset, boss: WorldBoss.AV.description });
       this.bosses.push({ order: 4, offset: this.offset, boss: WorldBoss.AV.description });
+
       this.bosses.push({ order: 3, offset: this.offset, boss: WorldBoss.WD.description });
+      this.bosses.push({ order: 2, offset: this.offset, boss: WorldBoss.WD.description });
+      this.bosses.push({ order: 1, offset: this.offset, boss: WorldBoss.WD.description });
     }
   }
 
