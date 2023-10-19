@@ -67,7 +67,8 @@ class WorldBossService {
     var currentBoss = this.bosses.pop();
     var currentDT = baseDT.plus(currentBoss.offset);
     var cacheReset = currentDT.weekdayLong === 'Thursday';
-    var occurrence = { order: currentBoss.order, extraTime: cacheReset, boss: currentBoss.boss, datetime: currentDT }
+    var occurrence = { order: currentBoss.order, extraTime: cacheReset, boss: currentBoss.boss, datetime: currentDT };
+    this.refillBossStack();
     return occurrence;
   }
 
