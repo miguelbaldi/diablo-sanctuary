@@ -6,13 +6,7 @@ Boss prediction note's
 Boss spawn pattern
 ------------------
 
-Which pattern is the right one?
-
-`3+2+3+2+3+2+3+2+3+2+3+2+3+2+2`
-
-or
-
-`3+2+3+2`?
+`3+2+3+2`
 
 And, in which order?
 
@@ -26,8 +20,8 @@ or
 - Avarice
 - Ashava
 
-Boss spawn timer pattern
-------------------------
+Boss spawn timer pattern (Season 1)
+-----------------------------------
 
 The tried and true time pattern is the following:
 
@@ -45,7 +39,7 @@ The tried and true time pattern is the following:
 4. `Duration.fromISO('PT5H53M30S')`
 5. `Duration.fromISO('PT5H25M13S')`
 
-### Collected data
+### Season 1 Collected data
 
 - (3) 05/10/2023, 09:02 Ashava
 - (4) 05/10/2023, 14:55 Ashava
@@ -72,3 +66,19 @@ this.bosses.push({ order: 2, offset: Duration.fromISO('PT5H25M13S'), boss: this.
 this.bosses.push({ order: 1, offset: Duration.fromISO('PT5H53M30S'), boss: this.AS});
 this.bosses.push({ order: 5, offset: Duration.fromISO('PT5H25M13S'), boss: this.AS}); // 05/10 20:20h Ashava
 ```
+
+Boss spawn timer pattern (Season 2)
+-----------------------------------
+
+The pattern was drastically simplified to be a simple offset:
+
+- `Duration.fromISO('PT3H30M')`
+
+There's no time restriction's.
+
+**All time-based calculations must use `UTC-4 (EDT)` time zone.**
+
+### Season 2 Collected data
+
+- (3) 19/10/2023, 14:00 Wandering Death
+- (3) 19/10/2023, 17:30 ?

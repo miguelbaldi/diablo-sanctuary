@@ -73,13 +73,13 @@ function WorldBossSpawnTimerComponent() {
       </div>
       <div className="row flex-nowrap">
         <form className="form-inline">
-          <label className="sr-only" for="inlineFormInputName2">Number of days to preview</label>
+          <label className="sr-only" htmlFor="inlineFormInputName2">Number of days to preview</label>
           <input type="text" className="form-control mb-2 mr-sm-2" onChange={(event) => {
             if (event.target.value) {
               setParameters({ days: parseInt(event.target.value), pastEventsSize: parameters.pastEventsSize });
             }
           }} id="inlineFormInputName2" placeholder={"Default to " + parameters.days + " days"} />
-          <label className="sr-only" for="inlineFormInputGroupUsername2">Number of past events</label>
+          <label className="sr-only" htmlFor="inlineFormInputGroupUsername2">Number of past events</label>
           <div className="input-group mb-2 mr-sm-2">
             <input type="text" className="form-control" onChange={(event) => {
               if (event.target.value) {
