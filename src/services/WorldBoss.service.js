@@ -64,12 +64,16 @@ class WorldBossService {
   }
 
   calculateSingle(baseDT) {
-    let occurrence = { datetime: baseDT.plus(this.offset)};
+    var currentBoss = this.bosses.pop();
+    var currentDT = baseDT.plus(currentBoss.offset);
+    var cacheReset = currentDT.weekdayLong === 'Thursday';
+    var occurrence = { order: currentBoss.order, extraTime: cacheReset, boss: currentBoss.boss, datetime: currentDT }
     return occurrence;
   }
 
   calculate(parameters) {
     let result = [];
+    this.refillBossStack();
     var now = DateTime.local({ zone: 'UTC-4' });
     var last = now.plus({ day: parameters.days });
     var occurrence = this.calculateSingle(this.zero);
@@ -118,23 +122,23 @@ class WorldBossService {
 
   refillBossStack() {
     if (this.bosses.size === 0) {
-      this.bosses.push({ order: 5, offset: Duration.fromISO('PT5H25M13S'), boss: WorldBoss.AS.description });
-      this.bosses.push({ order: 4, offset: Duration.fromISO('PT5H53M30S'), boss: WorldBoss.AS.description });
-      this.bosses.push({ order: 3, offset: Duration.fromISO('PT5H53M29S'), boss: WorldBoss.AS.description });
-      this.bosses.push({ order: 2, offset: Duration.fromISO('PT5H25M13S'), boss: WorldBoss.AV.description });
-      this.bosses.push({ order: 1, offset: Duration.fromISO('PT5H53M30S'), boss: WorldBoss.AV.description });
+      this.bosses.push({ order: 2, offset: this.offset, boss: WorldBoss.WD.description });
+      this.bosses.push({ order: 1, offset: this.offset, boss: WorldBoss.WD.description });
+      this.bosses.push({ order: 15, offset: this.offset, boss: WorldBoss.AS.description });
+      this.bosses.push({ order: 14, offset: this.offset, boss: WorldBoss.AS.description });
+      this.bosses.push({ order: 13, offset: this.offset, boss: WorldBoss.AV.description });
 
-      this.bosses.push({ order: 5, offset: Duration.fromISO('PT5H25M13S'), boss: WorldBoss.WD.description });
-      this.bosses.push({ order: 4, offset: Duration.fromISO('PT5H53M30S'), boss: WorldBoss.WD.description });
-      this.bosses.push({ order: 3, offset: Duration.fromISO('PT5H53M29S'), boss: WorldBoss.WD.description });
-      this.bosses.push({ order: 2, offset: Duration.fromISO('PT5H25M13S'), boss: WorldBoss.AS.description });
-      this.bosses.push({ order: 1, offset: Duration.fromISO('PT5H53M30S'), boss: WorldBoss.AS.description });
+      this.bosses.push({ order: 12, offset: this.offset, boss: WorldBoss.AV.description });
+      this.bosses.push({ order: 11, offset: this.offset, boss: WorldBoss.AV.description });
+      this.bosses.push({ order: 10, offset: this.offset, boss: WorldBoss.WD.description });
+      this.bosses.push({ order: 9, offset: this.offset, boss: WorldBoss.WD.description });
+      this.bosses.push({ order: 8, offset: this.offset, boss: WorldBoss.AS.description });
 
-      this.bosses.push({ order: 5, offset: Duration.fromISO('PT5H25M13S'), boss: WorldBoss.AV.description });
-      this.bosses.push({ order: 4, offset: Duration.fromISO('PT5H53M30S'), boss: WorldBoss.AV.description });
-      this.bosses.push({ order: 3, offset: Duration.fromISO('PT5H53M29S'), boss: WorldBoss.AV.description });
-      this.bosses.push({ order: 2, offset: Duration.fromISO('PT5H25M13S'), boss: WorldBoss.WD.description });
-      this.bosses.push({ order: 1, offset: Duration.fromISO('PT5H53M30S'), boss: WorldBoss.WD.description });
+      this.bosses.push({ order: 7, offset: this.offset, boss: WorldBoss.AS.description });
+      this.bosses.push({ order: 6, offset: this.offset, boss: WorldBoss.AS.description });
+      this.bosses.push({ order: 5, offset: this.offset, boss: WorldBoss.AV.description });
+      this.bosses.push({ order: 4, offset: this.offset, boss: WorldBoss.AV.description });
+      this.bosses.push({ order: 3, offset: this.offset, boss: WorldBoss.WD.description });
     }
   }
 
